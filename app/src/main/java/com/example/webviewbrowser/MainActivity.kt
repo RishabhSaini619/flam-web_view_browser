@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -41,46 +42,20 @@ class MainActivity : AppCompatActivity() {
         webViewField = findViewById(R.id.web_view_field)
         urlField = findViewById<EditText>(R.id.url_field)
 //        searchButton = findViewById<ImageButton>(R.id.src_btn)
-        urlField.addTextChangedListener(object : TextWatcher {
 
+        webViewField.loadUrl("https://www.google.com")
 
-            override fun afterTextChanged(s: Editable) {
-//                loadURL()
-//                urlField.visibility = View.INVISIBLE
-//                searchButton.visibility = View.VISIBLE
-
+        // Set an event listener on the EditText to load a new URL when the user submits a new URL
+        urlField.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+               loadUrl()
+                true
+            } else {
+                false
             }
-
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
-                loadURL()
-            }
-        })
-//        searchButton.setOnClickListener {
-//            searchButton.visibility = View.INVISIBLE
-//            urlField.visibility = View.VISIBLE
-//        }
-
-    }
-    private fun loadURL() {
-        val url = urlField.text.toString()
+        }
         webViewField.webViewClient = WebViewClient()
-
-        webViewField.apply {
-            loadUrl(url)
-            settings.javaScriptEnabled = true
-            settings.allowFileAccess = true
-            settings.databaseEnabled = true
-            settings.allowContentAccess =true
-            settings.domStorageEnabled = true
-            settings.builtInZoomControls = false
-            settings.cacheMode = WebSettings.LOAD_DEFAULT
-            settings.javaScriptCanOpenWindowsAutomatically = true}
-             webViewField.webChromeClient = object : WebChromeClient() {
+        webViewField.webChromeClient = object : WebChromeClient() {
             // Grant permissions for cam
             override fun onPermissionRequest(request: PermissionRequest) {
                 Log.i(TAG, "onPermissionRequest")
@@ -116,9 +91,21 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         }
-
-
     }
+
+    private fun loadUrl() {
+        webViewField.apply {
+            loadUrl(urlField.text.toString())
+            settings.javaScriptEnabled = true
+            settings.allowFileAccess = true
+            settings.databaseEnabled = true
+            settings.allowContentAccess =true
+            settings.domStorageEnabled = true
+            settings.builtInZoomControls = false
+            settings.cacheMode = WebSettings.LOAD_DEFAULT
+            settings.javaScriptCanOpenWindowsAutomatically = true}
+    }
+
 
 
 }
