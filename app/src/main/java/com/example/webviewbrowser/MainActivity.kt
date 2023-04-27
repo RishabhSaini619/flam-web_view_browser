@@ -3,7 +3,10 @@ package com.example.webviewbrowser
 import android.content.ContentValues.TAG
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -16,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import java.nio.file.WatchEvent
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,10 +40,30 @@ class MainActivity : AppCompatActivity() {
 
         webViewField = findViewById(R.id.web_view_field)
         urlField = findViewById<EditText>(R.id.url_field)
-        searchButton = findViewById<ImageButton>(R.id.src_btn)
-        searchButton.setOnClickListener {
-            loadURL()
-        }
+//        searchButton = findViewById<ImageButton>(R.id.src_btn)
+        urlField.addTextChangedListener(object : TextWatcher {
+
+
+            override fun afterTextChanged(s: Editable) {
+//                loadURL()
+//                urlField.visibility = View.INVISIBLE
+//                searchButton.visibility = View.VISIBLE
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int,
+                                       before: Int, count: Int) {
+                loadURL()
+            }
+        })
+//        searchButton.setOnClickListener {
+//            searchButton.visibility = View.INVISIBLE
+//            urlField.visibility = View.VISIBLE
+//        }
 
     }
     private fun loadURL() {
@@ -56,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             settings.builtInZoomControls = false
             settings.cacheMode = WebSettings.LOAD_DEFAULT
             settings.javaScriptCanOpenWindowsAutomatically = true}
-        webViewField.webChromeClient = object : WebChromeClient() {
+             webViewField.webChromeClient = object : WebChromeClient() {
             // Grant permissions for cam
             override fun onPermissionRequest(request: PermissionRequest) {
                 Log.i(TAG, "onPermissionRequest")
@@ -92,10 +116,6 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         }
-
-
-
-
 
 
     }
